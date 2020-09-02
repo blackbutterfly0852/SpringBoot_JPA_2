@@ -27,10 +27,12 @@ public class Category {
 
 
     // SELF로 양방향 연관관계
+    // 자식 입장에서
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
+    // 부모입장에서
     @OneToMany(mappedBy = "parent")
     private List<Category> child = new ArrayList<Category>();
 
