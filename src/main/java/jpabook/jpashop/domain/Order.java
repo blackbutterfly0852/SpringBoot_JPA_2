@@ -83,7 +83,7 @@ public class Order {
     // 2. 전체 주문 가격 로직
      public int getTotalPrice(){
         int totalPrice = 0;
-
+        // Alt + Enter -> Replace with sum -> 코드 깔끔하게 정리
         for (OrderItem orderItem : this.orderItems) {
             totalPrice += orderItem.getTotalPrice();
         }
