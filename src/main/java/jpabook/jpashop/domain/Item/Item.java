@@ -27,11 +27,11 @@ public abstract class Item {
 
     // 비즈니스 로직
     // 1. 재고 증가
-    public void addStockQuantity(int stockQuantity){
+    public void addStock(int stockQuantity){
         this.stockQuantity += stockQuantity;
     }
     // 2. 재고 감소
-    public void subStockQuantity(int stockQuantity){
+    public void removeStock(int stockQuantity){
         if(this.stockQuantity - stockQuantity < 0){
             throw new NotEnoughStockException("need more stock");
         }
