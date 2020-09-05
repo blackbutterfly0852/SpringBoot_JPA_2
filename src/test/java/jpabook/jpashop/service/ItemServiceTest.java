@@ -45,9 +45,9 @@ public class ItemServiceTest {
         itemService.saveItem(book);
         // when
         // 1) 재고 추가시
-        //book.addStockQuantity(1000);
+        book.addStock(1000);
         // 2) 재고 제거시
-        book.subStockQuantity(1000);
+        //book.subStock(1000);
         // then
         // 1) 재고 추가시
         //assertEquals(3000, book.getStockQuantity());

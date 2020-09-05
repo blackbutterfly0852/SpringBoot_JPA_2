@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +13,8 @@ import java.util.*;
 @Table(name = "orders")
 @Getter
 @Setter
+// 생성 메소드로만 orderItem을 생성할 수 있도록 제한 2
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 
     @Id
@@ -22,11 +26,11 @@ public class Order {
     @JoinColumn(name = "member_id") // 연관관계 주인으로서, 맵핑을 하겠다.
     private Member member;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) // Order를 persist() 하면 OrderItem도 강제로 persist() 해준다.
     private List<OrderItem> orderItems = new ArrayList<>();
 
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Order를 persist() 하면 delivery도 강제로 persist() 해준다.
     @JoinColumn(name = "delivery_id") // 연관관계 주인으로서, 맵핑을 하겠다.
     private Delivery delivery;
 
@@ -70,9 +74,11 @@ public class Order {
     // 비즈니스 로직
     // 1. 주문 취소
     public void cancel() {
-        if (delivery.getStatus().equals(DeliveryStatus.COMP)) {
+
+        if (this.delivery.getStatus().equals(DeliveryStatus.COMP)) {
             throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능 합니다.");
         }
+
         this.setStatus(OrderStatus.CANCEL);
         for (OrderItem orderItem : this.orderItems) {
             orderItem.cancel();
