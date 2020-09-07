@@ -52,7 +52,7 @@ public class MemberService {
 
     // 2. 회원 전체 조회
     @Transactional(readOnly = true) // 조회시 최적화
-    public List<Member> findAll(){
+    public List<Member> findMembers(){
         return memberRepository.findAll();
     }
 
