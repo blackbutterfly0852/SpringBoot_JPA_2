@@ -12,4 +12,10 @@ public class Album extends Item {
 
     private String artist;
     private String etc;
+
+
+
+    @Override
+    public void changeItem(int stockQuantity, String author, String isbn) {
+    }
 }

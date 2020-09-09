@@ -38,7 +38,6 @@ public abstract class Item {
         this.stockQuantity -= stockQuantity;
     }
 
-
-
-
+    // 200909 변경감지를 위한 추상 메소드 (여기서는 Book만), 개인적으로 추가함
+    public abstract void changeItem(int stockQuantity, String author, String isbn);
 }

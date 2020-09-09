@@ -18,7 +18,7 @@ public class ItemRepository {
         if (item.getId() == null) { // JPA에 저장하기 전까지 ID 값이 없다. -> 새로 생성 객체(INSERT)
             em.persist(item);
         } else { // 이미 저장된 것을 가져온다.(UPDATE)
-            em.merge(item);
+            Item merge = em.merge(item); // item은 파라미터로 넘어온 준영속상태, 리턴값은 영속상태
         }
     }
 

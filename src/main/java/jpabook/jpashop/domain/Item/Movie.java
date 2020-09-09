@@ -15,4 +15,8 @@ public class Movie extends Item{
     private String author;
     private String isbn;
 
+    @Override
+    public void changeItem(int stockQuantity, String author, String isbn) {
+
+    }
 }

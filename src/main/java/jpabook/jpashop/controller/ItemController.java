@@ -71,9 +71,13 @@ public class ItemController {
     // 여기선 @PathVariable String itemId 필수조건 X
     // @ModelAttribute("form") 기본이 form 객체로 넘어온다
     // id값 유의 해당 User가 해당 Item에 대한 수정 권한 있는지 체크
-    public String updateItem(@PathVariable String itemId ,@ModelAttribute("form") BookForm form){
-        Book book =  Book.updateBook(form.getId(), form.getName(),form.getPrice(),form.getStockQuantity(),form.getAuthor(),form.getIsbn());
-        itemService.saveItem(book);
+    public String updateItem(@PathVariable Long itemId ,@ModelAttribute("form") BookForm form){
+        // 1. 병합(merge) 사용
+        //Book book =  Book.updateBook(form.getId(), form.getName(),form.getPrice(),form.getStockQuantity(),form.getAuthor(),form.getIsbn());
+        //itemService.saveItem(book);
+
+        // 2. 변경감지(dirty checking) 사용 : 수량, 저자, ISBN만 수정하겠다. -> 수정 파마리터 값이 많으면 DTO로 전달 가능
+        itemService.updateItem(itemId, form.getStockQuantity(), form.getAuthor(), form.getIsbn());
         return "redirect:/items";
     }
 

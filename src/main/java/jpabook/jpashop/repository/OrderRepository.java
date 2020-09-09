@@ -31,7 +31,7 @@ public class OrderRepository {
     }
 
     // 3. 동적 쿼리
-//    public List<Order> finaAll(OrderSearch orderSearch) {
+    public List<Order> findAllByString(OrderSearch orderSearch) {
         // 1) 회원 이름과, 주문 상태(ORDER, CANCEL)가 모두 있는 경우 -> 둘 중에 하나만 있는 경우, 둘 다 없는 경우 고려 X -> 동적 쿼리 필요
 //        return  em.createQuery("select o from Order o join Member m" +
 //                " where o.status = :status" +
@@ -42,41 +42,41 @@ public class OrderRepository {
 //                .getResultList();
 
         // 2) 동적 쿼리 방법 1 -> 무식한 방법, 실무 X, 버그 생성 가능성 높음
-//        String jpql = "select o From Order o join o.member m";
-//        boolean isFirstCondition = true; // WHERE 조건의 첫 번째, 두 번째 구분하기 위함.
-//
-//        // 주문 상태 검색
-//        if (orderSearch.getOrderStatus() != null) {
-//            if (isFirstCondition) {
-//                jpql += " where";
-//                isFirstCondition = false;
-//            } else {
-//                jpql += " and";
-//            }
-//            jpql += " o.status = :status";
-//        }
-//
-//        // 회원 이름 검색
-//        if (StringUtils.hasText(orderSearch.getMemberName())) { // getMemberName()의 값이 있으면
-//            if (isFirstCondition) {
-//                jpql += " where";
-//                isFirstCondition = false;
-//            } else {
-//                jpql += " and";
-//            }
-//            jpql += " m.name like :name";
-//        }
-//        // 여기까지 기본적인 JPQL 작성이 되었다. 그런데 아직 파라미터 값은 전달 X
-//
-//        // 파라미터 값 넣어주기
-//        TypedQuery<Order> query = em.createQuery(jpql, Order.class).setMaxResults(1000); //최대 1000건
-//        if (orderSearch.getOrderStatus() != null) {
-//            query = query.setParameter("status", orderSearch.getOrderStatus()); // getOrderStatus()가 값이 있다면 파라미터 제공
-//        }
-//        if (StringUtils.hasText(orderSearch.getMemberName())) {
-//            query = query.setParameter("name", orderSearch.getMemberName()); // getMemberName()가 값이 있다면 파라미터 제공
-//        }
-//        return query.getResultList();
+        String jpql = "select o From Order o join o.member m";
+        boolean isFirstCondition = true; // WHERE 조건의 첫 번째, 두 번째 구분하기 위함.
+
+        // 주문 상태 검색
+        if (orderSearch.getOrderStatus() != null) {
+            if (isFirstCondition) {
+                jpql += " where";
+                isFirstCondition = false;
+            } else {
+                jpql += " and";
+            }
+            jpql += " o.status = :status";
+        }
+
+        // 회원 이름 검색
+        if (StringUtils.hasText(orderSearch.getMemberName())) { // getMemberName()의 값이 있으면
+            if (isFirstCondition) {
+                jpql += " where";
+                isFirstCondition = false;
+            } else {
+                jpql += " and";
+            }
+            jpql += " m.name like :name";
+        }
+        // 여기까지 기본적인 JPQL 작성이 되었다. 그런데 아직 파라미터 값은 전달 X
+
+        // 파라미터 값 넣어주기
+        TypedQuery<Order> query = em.createQuery(jpql, Order.class).setMaxResults(1000); //최대 1000건
+        if (orderSearch.getOrderStatus() != null) {
+            query = query.setParameter("status", orderSearch.getOrderStatus()); // getOrderStatus()가 값이 있다면 파라미터 제공
+        }
+        if (StringUtils.hasText(orderSearch.getMemberName())) {
+            query = query.setParameter("name", orderSearch.getMemberName()); // getMemberName()가 값이 있다면 파라미터 제공
+        }
+        return query.getResultList();
 //    }
     // 3) 동적 쿼리 방법 2 -> JPA Criteria -> 실무 X
     // JPA 제공하는 동적 쿼리를 빌드해주는 즉, JPQL를 JAVA 코드로 작성할 수 있게끔, 제공하는 기능
@@ -107,7 +107,8 @@ public class OrderRepository {
 //        TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000); //최대 1000건
 //
 //        return query.getResultList();
-//    }
+
+        }
 
 
 

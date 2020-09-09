@@ -57,9 +57,8 @@ public class ItemServiceTest {
     }
 
     public Item createItem() {
-        Item book = new Book();
-        book.setName("김동우");
-        book.setStockQuantity(1000);
+        Book book = Book.createBook("김동우",10000,100,"김동우","123");
+
         return book;
     }
 }

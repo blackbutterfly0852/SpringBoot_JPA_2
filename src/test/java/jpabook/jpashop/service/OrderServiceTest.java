@@ -93,10 +93,7 @@ public class OrderServiceTest {
     }
 
     public Item createItem() {
-        Item book = new Book();
-        book.setName("자서전");
-        book.setPrice(10000);
-        book.setStockQuantity(10);
+        Book book = Book.createBook("김동우",10000,100,"김동우","123");
         return book;
     }
 }
