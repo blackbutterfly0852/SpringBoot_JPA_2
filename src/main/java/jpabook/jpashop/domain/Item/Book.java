@@ -18,7 +18,7 @@ public class Book extends Item{
     private String isbn;
 
     // 200908 book 생성 메서드 개인적으로 추가 -> ItemController에서 사용
-    protected Book(){
+    public Book(){
 
     }
 

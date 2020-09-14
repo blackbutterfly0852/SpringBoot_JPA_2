@@ -19,7 +19,7 @@ public class MemberApiController {
     private final MemberService memberService;
 
     // API는 JSON으로 통신,
-    // @RequestBody는 Json 데이터를 Member 엔티티로 바인딩
+    // @Request(header)Body는 Json 데이터를 Member 엔티티로 바인딩
     // 1. 회원등록_1
     @PostMapping("/api/v1/members")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
