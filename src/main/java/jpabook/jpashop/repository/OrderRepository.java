@@ -78,9 +78,9 @@ public class OrderRepository {
         }
         return query.getResultList();
 //    }
-    // 3) 동적 쿼리 방법 2 -> JPA Criteria -> 실무 X
-    // JPA 제공하는 동적 쿼리를 빌드해주는 즉, JPQL를 JAVA 코드로 작성할 수 있게끔, 제공하는 기능
-    // 단점 : 쿼리가 그려지지 않는다. 유지보수성 낮아짐
+        // 3) 동적 쿼리 방법 2 -> JPA Criteria -> 실무 X
+        // JPA 제공하는 동적 쿼리를 빌드해주는 즉, JPQL를 JAVA 코드로 작성할 수 있게끔, 제공하는 기능
+        // 단점 : 쿼리가 그려지지 않는다. 유지보수성 낮아짐
 //    public List<Order> findAllByCriteria(OrderSearch orderSearch){
 //        // JPQL 생성
 //        CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -108,7 +108,21 @@ public class OrderRepository {
 //
 //        return query.getResultList();
 
-        }
+    }
+
+    // OrderSimpleApiController.java V3 패치 조인용
+    public List<Order> findAllWithMemberDelivery() {
+        // 패치 조인
+        // 먼저 조인을 세팅을 해놓고, 한 번에 가져온다.
+        // 이 경우 Order.java의 Member와 Delivery가 Lazy이지만 무시하고
+        // 진짜 객체를 생성해서 값을 채워야 리턴한다.
+        return em.createQuery("select o from Order o" +
+                " join fetch o.member m " +
+                " join fetch o.delivery d ", Order.class
+        ).getResultList();
+
+    }
+
 
 
 
