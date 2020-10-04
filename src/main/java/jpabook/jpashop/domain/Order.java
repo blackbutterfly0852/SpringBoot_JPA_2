@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class Order {
     @JoinColumn(name = "member_id") // 연관관계 주인으로서, 맵핑을 하겠다.
     private Member member;
 
+    //@BatchSize(size = 1000)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) // Order를 persist() 하면 OrderItem도 강제로 persist() 해준다.
     private List<OrderItem> orderItems = new ArrayList<>();
 

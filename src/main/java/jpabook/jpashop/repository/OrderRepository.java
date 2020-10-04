@@ -123,7 +123,36 @@ public class OrderRepository {
 
     }
 
+    // OrderApiController.java V3 컬렉션 패치 조인용
+    // 컬렉션 패치 조인
+    // 문제 : Order 데이터가 OrderItem 만큼 데이터가 많아진다(뻥튀기)
+    // 해결책 : OrderRepository.java findAllWithItem()의 distinct 추가 (DB의 distinct 기능 + JPA가 같은 참조값이면, 즉 엔티티가 중복인 경우에 중복제거 후 컬렉션에 담는다)
+    // 그러나 최대 단점 : 1:多  관계에서 패치 조인을 할 경우, 페이징 불가능하다!
+    // WARN 38084 --- [nio-8080-exec-2] o.h.h.internal.ast.QueryTranslatorImpl   : HHH000104: firstResult/maxResults specified with collection fetch; applying in memory!
+    // 패치 조인을 사용했는데, 페이징 쿼리가 들어갔네? 그럼 메모리 상에서 sort 처리를 하겠어! -> 데이터가 만 개 이상인 경우, 애플리케이션에 만 개를 다 올린 후, 페이징 처리 -> 메모리 과부하 가능성 높음(OUT OF MEMORY)
+    // 기본적으로 패치 조인시 Order 데이터가 많아 지는데, 이를 가지로 페이징 처리를 하려고 하니, 기준점 자체가 흔들려서 위와 같은 현상이 발생함.
+
+    public List<Order> findAllWithItem() {
+        return em.createQuery("select distinct o from Order o " +
+                              " join fetch o.member m" +
+                              " join fetch o.delivery d" +
+                              " join fetch o.orderItems oi" +
+                              " join fetch oi.item i", Order.class)
+                               // 아래부터는 페이징 쿼리
+                               .setFirstResult(1)
+                               .setMaxResults(100)
+                               .getResultList();
+
+    }
 
 
+    // 컬렉션 + 페이징
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
 
+        return em.createQuery("select o from Order o" +
+                " join fetch o.member m " +
+                " join fetch o.delivery d ", Order.class
+        ).setFirstResult(offset).setMaxResults(limit).getResultList();
+
+    }
 }

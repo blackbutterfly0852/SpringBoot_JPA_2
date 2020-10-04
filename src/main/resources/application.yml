@@ -12,6 +12,8 @@ spring:
       hibernate:
         show-sql: true
         format-sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false # Could not initialize service에서 영속성컨테스트가 종료.
 logging:
   level:
     org.hibernate.SQL: debug

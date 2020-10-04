@@ -21,10 +21,11 @@ public class JpashopApplication {
 
 	@Bean
 	Hibernate5Module hibernate5Module(){
+		// 기본설정 : Lazy 로딩 필드는 프록시 객체인 경우 무시.
 		Hibernate5Module hibernate5Module = new Hibernate5Module();
 		// Lazy 로딩 필드도 조회 -> 불필요한 정보 노출, 성능이슈, API 스펙변경리스크
 		// 아래 커맨드를 주석 처리하고, OrderSimpleApiController.java에서 For 구문 사용 하면 원하는 데이터만 출력 가능
-		hibernate5Module.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING,true);
+		//  hibernate5Module.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING,true);
 		return new Hibernate5Module();
 	}
 
