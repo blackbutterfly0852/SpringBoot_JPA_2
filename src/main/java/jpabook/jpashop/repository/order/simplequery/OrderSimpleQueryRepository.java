@@ -17,7 +17,8 @@ public class OrderSimpleQueryRepository {
     // JPA는 엔티티나, 값타입만 변환 가능, DTO는 자동 변환 불가.
     // DTO 변환을 위해 별도 작업 필요 -> 원하는 컬럼만 선택 가능
     public List<OrderSimpleQueryDto> findOrderDtos() {
-        return em.createQuery("select jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto(o.id,m.name,o.orderDate,o.status,d.Address) from Order O" +
+        return em.createQuery(
+                "select new jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto(o.id,m.name,o.orderDate,o.status,d.address) from Order o" +
                 " join o.member m" +
                 " join o.delivery d", OrderSimpleQueryDto.class).getResultList();
     }
