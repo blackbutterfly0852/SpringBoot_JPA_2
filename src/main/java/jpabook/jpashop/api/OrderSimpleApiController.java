@@ -29,6 +29,7 @@ public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
     private final OrderSimpleQueryRepository orderSimpleQueryRepository;
+    // 1. 주문조회 V1
     @GetMapping("/api/v1/simple-orders")
     public List<Order> orderV1(){
         // 아래 커맨드는 무한루프 : Order <-> Member (양뱡항 연관관계로 인한 무한루프)
@@ -42,7 +43,7 @@ public class OrderSimpleApiController {
         }
         return all;
     }
-
+    // 2. 주문조회 V2
     @GetMapping("/api/v2/simple-orders")
     public List<SimpleOrderDto> orderV2(){
         // Order 쿼리 결과 : 2 row
@@ -53,7 +54,7 @@ public class OrderSimpleApiController {
         return result;
     }
 
-    // 3. 패치 조인용 -> 실무 JPA를 위해 꼭 이해 필요
+    // 3. 주문조회 V3 -> 패치 조인용 -> 실무 JPA를 위해 꼭 이해 필요
     // 실무의 90 % N+1 성능 문제 -> 패치 조인으로 해결 가능.
     // 기본적으로 LAZY로 설정하고, 필요한 것만 패치 조인으로 묶어서 한 번에 가져오는 식으로 개발필요.
     @GetMapping("/api/v3/simple-orders")
@@ -63,8 +64,7 @@ public class OrderSimpleApiController {
         return result;
     }
 
-
-    // 4. DTO 사전 변환, 원하는 컬럼 선택 가능
+    // 4. 주문조회 V4 -> DTO 사전 변환, 원하는 컬럼 선택 가능
     // V3는 활용가능성 높음, V4는 활용가능성 낮음 및 코드 깔끔 X
     // V4가 V3 보다는 최적화된 상태.(생각보다 V3하고 차이 없음)
     // API 스펙에 맞게 Repository 코드가 정해진 상태

@@ -20,14 +20,14 @@ public class MemberApiController {
 
     // API는 JSON으로 통신,
     // @Request(header)Body는 Json 데이터를 Member 엔티티로 바인딩
-    // 1. 회원등록_1
+    // 1. 회원등록 V1
     @PostMapping("/api/v1/members")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
     }
 
-    // 1. 회원등록_2
+    // 1. 회원등록 V2
     @PostMapping("/api/v2/members")
     public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request) {
         Member member = new Member();
@@ -37,7 +37,7 @@ public class MemberApiController {
     }
 
 
-    // 2. 회원수정
+    // 2. 회원수정 V2
     @PutMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2
     (@PathVariable("id") Long id,
@@ -48,7 +48,7 @@ public class MemberApiController {
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
     }
 
-    // 3. 회원조회
+    // 3. 회원조회 V1
     // v1의 단점 : 회원조회인데 주문 내역까지 전달 -> Member.java에서 @JsonIgnore
 
     @GetMapping("/api/v1/members")
@@ -56,7 +56,7 @@ public class MemberApiController {
         return memberService.findMembers();
     }
 
-    // 3. 회원조회_2
+    // 3. 회원조회 V2
     @GetMapping("/api/v2/members")
     public Result membersV2() {
         List<Member> findMembers = memberService.findMembers();

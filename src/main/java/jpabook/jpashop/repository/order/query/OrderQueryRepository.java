@@ -16,19 +16,10 @@ import java.util.stream.Collectors;
 public class OrderQueryRepository {
 
     private final EntityManager em;
-    // OrderApiController.java 의 OrderDto class 참조 X :
-    // repository가 controller를 참조해 버리는 순환관계.
-    public List<OrderQueryDto> findOrders(){
-        // new 연산자 사용? SQL 처럼 사용하기 때문에 컬렉션을 사용할 수 없다.
-        return em.createQuery(
-                "select new jpabook.jpashop.repository.order.query.OrderQueryDto(o.id, m.name,o.orderDate,o.status,d.address)" +
-                        " from Order o" +
-                        " join o.member m" +
-                        " join o.delivery d", OrderQueryDto.class)
-                .getResultList();
-    }
 
-    // 컬렉션 처리하기 위한 로직
+    // 4. 주문조회 V4 : DTO 조회
+    // OrderApiController.java 의 OrderDto class 참조 X -> repository가 controller를 참조해 버리는 순환관계가 되기 때문이다.
+    // 처리된 컬렉션을 toOne 관계로 나온 쿼리결과 값에 대입.
     public List<OrderQueryDto> findOrderQueryDtos(){
         List<OrderQueryDto> result = findOrders();
         // 루프를 돌면서 orderItem 가져온다.
@@ -39,7 +30,20 @@ public class OrderQueryRepository {
         return result;
     }
 
+    // 4. 주문조회 V4 : DTO 조회
+    public List<OrderQueryDto> findOrders(){
+        // new 연산자 사용? SQL 처럼 사용하기 때문에 컬렉션을 표현할 수 없다.(컬렉션까지 조회 불가능)
+        // 그래서 toOne 관계만 우선 가져온다.
+        return em.createQuery(
+                "select new jpabook.jpashop.repository.order.query.OrderQueryDto(o.id, m.name,o.orderDate,o.status,d.address)" +
+                        " from Order o" +
+                        " join o.member m" +
+                        " join o.delivery d", OrderQueryDto.class)
+                .getResultList();
+    }
 
+    // 4. 주문조회 V4 : DTO 조회
+    // 가장 아래의 컬렉션 처리
     private List<OrderItemQueryDto> findOrderItems(Long orderId){
         return em.createQuery(
                 "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
@@ -48,11 +52,10 @@ public class OrderQueryRepository {
                         " where oi.order.id =:orderId", OrderItemQueryDto.class)
                 .setParameter("orderId", orderId)
                 .getResultList();
-
     }
 
 
-
+    // 5. 주문조회 V5 : DTO 조회 -> 1+N 문제 최적화
     // V5 DTO 조회 최적화 -> LOOP 안돌고 한번에 가져온다.
     public List<OrderQueryDto> findAllByDto_optimization() {
         List<OrderQueryDto> result = findOrders();
@@ -62,13 +65,19 @@ public class OrderQueryRepository {
         result.forEach(o -> o.setOrderItems(orderItemMap.get(o.getOrderId())));
         return result;
     }
-
+    // 5. 주문조회 V5 : DTO 조회 -> 1+N 문제 최적화
+    private List<Long> toOrderIds(List<OrderQueryDto> result) {
+        return result.stream()
+                .map(o -> o.getOrderId())
+                .collect(Collectors.toList());
+    }
+    // 5. 주문조회 V5 : DTO 조회 -> 1+N 문제 최적화
     private Map<Long, List<OrderItemQueryDto>> findOrderItemMap(List<Long> orderIds) {
         List<OrderItemQueryDto> orderItems =  em.createQuery(
                 "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
                         " from OrderItem oi" +
                         " join oi.item i" +
-                        " where oi.order.id in :orderIds", OrderItemQueryDto.class)
+                        " where oi.order.id in :orderIds", OrderItemQueryDto.class) // in 절 사용
                 .setParameter("orderIds", orderIds)
                 .getResultList();
 
@@ -77,13 +86,8 @@ public class OrderQueryRepository {
         return orderItems.stream().collect(Collectors.groupingBy(orderItemQueryDto -> orderItemQueryDto.getOrderId()));
     }
 
-    private List<Long> toOrderIds(List<OrderQueryDto> result) {
-        return result.stream()
-                        .map(o -> o.getOrderId())
-                        .collect(Collectors.toList());
-    }
 
-    // V6 한 번의 쿼리로 조회
+    // 6. 주문조회 V6 : 한 번의 쿼리
     public List<OrderFlatDto> findAllByDto_flat() {
         return em.createQuery(
                 "select new jpabook.jpashop.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
